@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>FingerLock System</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f3f5f8;
+      color: #222;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .header {
+      background: #111827;
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: #cbd5e1;
+    }
+
+    .connection {
+      margin-top: 15px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 20px;
+      background: #374151;
+      font-size: 14px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ef4444;
+    }
+
+    .dot.online {
+      background: #22c55e;
+    }
+
+    .mode-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .mode-button {
+      border: none;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transition: 0.2s;
+    }
+
+    .mode-button:hover {
+      transform: translateY(-2px);
+    }
+
+    .mode-button.active {
+      background: #2563eb;
+      color: white;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .card h2 {
+      margin-bottom: 20px;
+      font-size: 21px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .status-box {
+      padding: 25px;
+      text-align: center;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .status-title {
+      font-size: 13px;
+      color: #64748b;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .status-message {
+      font-size: 22px;
+      font-weight: bold;
+      color: #111827;
+    }
+
+    .scan-result {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .result-item {
+      background: #f8fafc;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .result-label {
+      font-size: 12px;
+      color: #64748b;
+      margin-bottom: 5px;
+    }
+
+    .result-value {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 7px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+      background: white;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #2563eb;
+    }
+
+    .action-button {
+      width: 100%;
+      border: none;
+      padding: 14px;
+      border-radius: 9px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      color: white;
+    }
+
+    .enroll-button {
+      background: #16a34a;
+    }
+
+    .delete-button {
+      background: #dc2626;
+    }
+
+    .device-message {
+      margin-top: 20px;
+      padding: 15px;
+      background: #eff6ff;
+      border-radius: 8px;
+      color: #1e40af;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .user-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .user-row:last-child {
+      border-bottom: none;
+    }
+
+    .user-name {
+      font-weight: bold;
+    }
+
+    .user-id {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 3px;
+    }
+
+    .log-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      padding: 13px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .log-row:last-child {
+      border-bottom: none;
+    }
+
+    .log-name {
+      font-weight: bold;
+    }
+
+    .log-details {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    .log-time {
+      text-align: right;
+      font-size: 13px;
+      color: #475569;
+    }
+
+    .empty {
+      text-align: center;
+      color: #94a3b8;
+      padding: 20px;
+    }
+
+    @media(max-width: 600px) {
+      .container {
+        padding: 12px;
+      }
+
+      .header {
+        padding: 20px;
+      }
+
+      .header h1 {
+        font-size: 23px;
+      }
+
+      .mode-button {
+        padding: 12px 5px;
+        font-size: 13px;
+      }
+
+      .card {
+        padding: 18px;
+      }
+
+      .scan-result {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+
+    <h1>FingerLock System</h1>
+
+    <p>ESP32 Fingerprint Access Management</p>
+
+    <div class="connection">
+      <div id="connectionDot" class="dot"></div>
+      <span id="connectionText">Connecting to Firebase...</span>
+    </div>
+
+  </div>
+
+
+  <!-- MODE BUTTONS -->
+  <div class="mode-buttons">
+
+    <button
+      id="normalBtn"
+      class="mode-button active"
+      onclick="changeMode('NORMAL')">
+      NORMAL
+    </button>
+
+    <button
+      id="enrollBtn"
+      class="mode-button"
+      onclick="changeMode('ENROLL')">
+      ENROLL
+    </button>
+
+    <button
+      id="deleteBtn"
+      class="mode-button"
+      onclick="changeMode('DELETE')">
+      DELETE
+    </button>
+
+  </div>
+
+
+  <!-- NORMAL -->
+  <div id="normalPanel" class="card">
+
+    <h2>Fingerprint Detection</h2>
+
+    <div class="status-box">
+
+      <div class="status-title">
+        DEVICE STATUS
+      </div>
+
+      <div id="normalStatus" class="status-message">
+        Waiting for ESP32...
+      </div>
+
+    </div>
+
+
+    <div class="scan-result">
+
+      <div class="result-item">
+        <div class="result-label">FINGERPRINT ID</div>
+        <div id="lastID" class="result-value">-</div>
+      </div>
+
+      <div class="result-item">
+        <div class="result-label">NAME</div>
+        <div id="lastName" class="result-value">-</div>
+      </div>
+
+      <div class="result-item">
+        <div class="result-label">DATE</div>
+        <div id="lastDate" class="result-value">-</div>
+      </div>
+
+      <div class="result-item">
+        <div class="result-label">TIME</div>
+        <div id="lastTime" class="result-value">-</div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ENROLL -->
+  <div id="enrollPanel" class="card hidden">
+
+    <h2>Enroll New Fingerprint</h2>
+
+    <div class="form-group">
+      <label>User Name</label>
+
+      <input
+        id="enrollName"
+        type="text"
+        placeholder="Example: Ahmad">
+    </div>
+
+
+    <div class="form-group">
+      <label>Fingerprint ID</label>
+
+      <input
+        id="enrollID"
+        type="number"
+        min="1"
+        max="127"
+        placeholder="1 - 127">
+    </div>
+
+
+    <button
+      class="action-button enroll-button"
+      onclick="startEnroll()">
+      START ENROLL
+    </button>
+
+
+    <div id="enrollMessage" class="device-message">
+      Ready
+    </div>
+
+  </div>
+
+
+  <!-- DELETE -->
+  <div id="deletePanel" class="card hidden">
+
+    <h2>Delete Fingerprint</h2>
+
+    <div class="form-group">
+
+      <label>Select Fingerprint</label>
+
+      <select id="deleteSelect">
+        <option value="">
+          Select fingerprint
+        </option>
+      </select>
+
+    </div>
+
+
+    <button
+      class="action-button delete-button"
+      onclick="deleteFingerprint()">
+      DELETE FINGERPRINT
+    </button>
+
+
+    <div id="deleteMessage" class="device-message">
+      Ready
+    </div>
+
+  </div>
+
+
+  <!-- USERS -->
+  <div class="card">
+
+    <h2>Registered Fingerprints</h2>
+
+    <div id="userList">
+      <div class="empty">
+        No registered fingerprints
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- LOG -->
+  <div class="card">
+
+    <h2>Recent Activity</h2>
+
+    <div id="logList">
+      <div class="empty">
+        No activity yet
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+
+<script type="module">
+
+// =====================================================
+// FIREBASE IMPORT
+// =====================================================
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+
+import {
+  getAuth,
+  signInAnonymously,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+
+import {
+  getDatabase,
+  ref,
+  set,
+  onValue,
+  query,
+  limitToLast
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
+
+
+// =====================================================
+// FIREBASE CONFIG
+// =====================================================
+
+const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyCznaaj5XUFyOH3IhbWc4v_njVh4eQ1rqs",
+
+  authDomain:
+    "fingerlock.firebaseapp.com",
+
+  databaseURL:
+    "https://fingerlock-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+  projectId:
+    "fingerlock",
+
+  storageBucket:
+    "fingerlock.firebasestorage.app",
+
+  messagingSenderId:
+    "1036190125015",
+
+  appId:
+    "1:1036190125015:web:bbf15242e1d8c78db95992"
+};
+
+
+// =====================================================
+// INITIALIZE FIREBASE
+// =====================================================
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const db = getDatabase(app);
+
+
+// =====================================================
+// UI
+// =====================================================
+
+const connectionText =
+  document.getElementById("connectionText");
+
+const connectionDot =
+  document.getElementById("connectionDot");
+
+
+// =====================================================
+// FIREBASE LOGIN
+// =====================================================
+
+console.log("Connecting Firebase...");
+
+connectionText.innerText =
+  "Connecting to Firebase...";
+
+
+signInAnonymously(auth)
+
+.then((result) => {
+
+  console.log("Anonymous login successful");
+
+  console.log(
+    "UID:",
+    result.user.uid
+  );
+
+})
+
+.catch((error) => {
+
+  console.error(
+    "Firebase Auth Error:",
+    error
+  );
+
+  connectionText.innerText =
+    "Firebase Auth Error";
+
+  connectionDot.classList.remove("online");
+
+  alert(
+    "Firebase Auth Error\n\n" +
+    error.code +
+    "\n\n" +
+    error.message
+  );
+
+});
+
+
+// =====================================================
+// AUTH STATE
+// =====================================================
+
+let listenersStarted = false;
+
+
+onAuthStateChanged(
+  auth,
+  (user) => {
+
+    if (user) {
+
+      console.log(
+        "Firebase authenticated"
+      );
+
+      connectionText.innerText =
+        "Firebase Connected";
+
+      if (!listenersStarted) {
+
+        listenersStarted = true;
+
+        startFirebaseListeners();
+      }
+
+    }
+
+    else {
+
+      console.log(
+        "Firebase not authenticated"
+      );
+
+    }
+
+  }
+);
+
+
+// =====================================================
+// FIREBASE LISTENERS
+// =====================================================
+
+function startFirebaseListeners() {
+
+  console.log(
+    "Starting Firebase listeners"
+  );
+
+
+  // ===================================================
+  // DEVICE STATUS
+  // ===================================================
+
+  onValue(
+
+    ref(db, "device"),
+
+    (snapshot) => {
+
+      const data =
+        snapshot.val();
+
+
+      console.log(
+        "Device:",
+        data
+      );
+
+
+      if (!data) {
+
+        connectionText.innerText =
+          "Firebase Connected";
+
+        connectionDot.classList.remove(
+          "online"
+        );
+
+        return;
+      }
+
+
+      if (data.online === true) {
+
+        connectionText.innerText =
+          "ESP32 Online";
+
+        connectionDot.classList.add(
+          "online"
+        );
+
+      }
+
+      else {
+
+        connectionText.innerText =
+          "ESP32 Offline";
+
+        connectionDot.classList.remove(
+          "online"
+        );
+
+      }
+
+
+      if (data.status) {
+
+        document
+          .getElementById(
+            "normalStatus"
+          )
+          .innerText =
+          data.status;
+
+      }
+
+
+      if (data.message) {
+
+        document
+          .getElementById(
+            "enrollMessage"
+          )
+          .innerText =
+          data.message;
+
+
+        document
+          .getElementById(
+            "deleteMessage"
+          )
+          .innerText =
+          data.message;
+
+      }
+
+    },
+
+    (error) => {
+
+      console.error(
+        "Device database error:",
+        error
+      );
+
+
+      connectionText.innerText =
+        "Database Error";
+
+
+      alert(
+        "Firebase Database Error\n\n" +
+        error.message
+      );
+
+    }
+
+  );
+
+
+  // ===================================================
+  // LAST SCAN
+  // ===================================================
+
+  onValue(
+
+    ref(db, "last_scan"),
+
+    (snapshot) => {
+
+      const data =
+        snapshot.val();
+
+
+      if (!data)
+        return;
+
+
+      document
+        .getElementById("lastID")
+        .innerText =
+        data.id ?? "-";
+
+
+      document
+        .getElementById("lastName")
+        .innerText =
+        data.name ?? "-";
+
+
+      document
+        .getElementById("lastDate")
+        .innerText =
+        data.date ?? "-";
+
+
+      document
+        .getElementById("lastTime")
+        .innerText =
+        data.time ?? "-";
+
+    }
+
+  );
+
+
+  // ===================================================
+  // USERS
+  // ===================================================
+
+  onValue(
+
+    ref(db, "users"),
+
+    (snapshot) => {
+
+      const data =
+        snapshot.val();
+
+
+      const list =
+        document.getElementById(
+          "userList"
+        );
+
+
+      const select =
+        document.getElementById(
+          "deleteSelect"
+        );
+
+
+      list.innerHTML = "";
+
+
+      select.innerHTML =
+        '<option value="">Select fingerprint</option>';
+
+
+      if (!data) {
+
+        list.innerHTML =
+          '<div class="empty">No registered fingerprints</div>';
+
+        return;
+      }
+
+
+      Object.keys(data)
+
+      .sort(
+        (a, b) =>
+          Number(a) - Number(b)
+      )
+
+      .forEach((key) => {
+
+        const user =
+          data[key];
+
+
+        const id =
+          user.id ?? key;
+
+
+        const name =
+          user.name || "Unknown";
+
+
+        const row =
+          document.createElement(
+            "div"
+          );
+
+
+        row.className =
+          "user-row";
+
+
+        row.innerHTML = `
+
+          <div>
+
+            <div class="user-name">
+              ${escapeHTML(name)}
+            </div>
+
+            <div class="user-id">
+              Fingerprint ID: ${id}
+            </div>
+
+          </div>
+
+        `;
+
+
+        list.appendChild(row);
+
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+
+        option.value =
+          id;
+
+
+        option.dataset.name =
+          name;
+
+
+        option.textContent =
+          "ID " +
+          id +
+          " - " +
+          name;
+
+
+        select.appendChild(
+          option
+        );
+
+      });
+
+    }
+
+  );
+
+
+  // ===================================================
+  // RECENT LOG
+  // ===================================================
+
+  const logsQuery =
+    query(
+
+      ref(
+        db,
+        "fingerprint_logs"
+      ),
+
+      limitToLast(10)
+
+    );
+
+
+  onValue(
+
+    logsQuery,
+
+    (snapshot) => {
+
+      const data =
+        snapshot.val();
+
+
+      const list =
+        document.getElementById(
+          "logList"
+        );
+
+
+      list.innerHTML = "";
+
+
+      if (!data) {
+
+        list.innerHTML =
+          '<div class="empty">No activity yet</div>';
+
+        return;
+      }
+
+
+      const logs =
+        Object.values(data)
+        .reverse();
+
+
+      logs.forEach(
+        (log) => {
+
+          const row =
+            document.createElement(
+              "div"
+            );
+
+
+          row.className =
+            "log-row";
+
+
+          row.innerHTML = `
+
+            <div>
+
+              <div class="log-name">
+
+                ${escapeHTML(
+                  log.name || "Unknown"
+                )}
+
+              </div>
+
+              <div class="log-details">
+
+                Fingerprint ID:
+                ${log.id ?? "-"}
+
+              </div>
+
+            </div>
+
+
+            <div class="log-time">
+
+              ${escapeHTML(
+                log.date || ""
+              )}
+
+              <br>
+
+              ${escapeHTML(
+                log.time || ""
+              )}
+
+            </div>
+
+          `;
+
+
+          list.appendChild(
+            row
+          );
+
+        }
+      );
+
+    }
+
+  );
+
+}
+
+
+// =====================================================
+// CHANGE MODE
+// =====================================================
+
+window.changeMode =
+async function(mode) {
+
+  document
+    .getElementById("normalPanel")
+    .classList.add("hidden");
+
+  document
+    .getElementById("enrollPanel")
+    .classList.add("hidden");
+
+  document
+    .getElementById("deletePanel")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById("normalBtn")
+    .classList.remove("active");
+
+  document
+    .getElementById("enrollBtn")
+    .classList.remove("active");
+
+  document
+    .getElementById("deleteBtn")
+    .classList.remove("active");
+
+
+  if (mode === "NORMAL") {
+
+    document
+      .getElementById("normalPanel")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("normalBtn")
+      .classList.add("active");
+
+  }
+
+
+  if (mode === "ENROLL") {
+
+    document
+      .getElementById("enrollPanel")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("enrollBtn")
+      .classList.add("active");
+
+  }
+
+
+  if (mode === "DELETE") {
+
+    document
+      .getElementById("deletePanel")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("deleteBtn")
+      .classList.add("active");
+
+  }
+
+
+  try {
+
+    await set(
+
+      ref(
+        db,
+        "command/mode"
+      ),
+
+      mode
+
+    );
+
+
+    console.log(
+      "Mode:",
+      mode
+    );
+
+  }
+
+  catch(error) {
+
+    console.error(error);
+
+    alert(
+      "Failed to change mode\n\n" +
+      error.message
+    );
+
+  }
+
+};
+
+
+// =====================================================
+// START ENROLL
+// =====================================================
+
+window.startEnroll =
+async function() {
+
+  const name =
+    document
+      .getElementById(
+        "enrollName"
+      )
+      .value
+      .trim();
+
+
+  const id =
+    parseInt(
+
+      document
+        .getElementById(
+          "enrollID"
+        )
+        .value
+
+    );
+
+
+  if (name === "") {
+
+    alert(
+      "Please enter user name"
+    );
+
+    return;
+  }
+
+
+  if (
+    isNaN(id) ||
+    id < 1 ||
+    id > 127
+  ) {
+
+    alert(
+      "Fingerprint ID must be between 1 and 127"
+    );
+
+    return;
+  }
+
+
+  // Safe for ESP32 32-bit integer
+  const requestId =
+    Math.floor(
+      Math.random() *
+      1000000000
+    );
+
+
+  document
+    .getElementById(
+      "enrollMessage"
+    )
+    .innerText =
+    "Sending enroll command...";
+
+
+  try {
+
+    await set(
+
+      ref(
+        db,
+        "command"
+      ),
+
+      {
+        mode: "ENROLL",
+        id: id,
+        name: name,
+        requestId: requestId
+      }
+
+    );
+
+
+    document
+      .getElementById(
+        "enrollMessage"
+      )
+      .innerText =
+      "Waiting for ESP32...";
+
+
+    console.log(
+      "Enroll command sent"
+    );
+
+  }
+
+  catch(error) {
+
+    console.error(error);
+
+
+    document
+      .getElementById(
+        "enrollMessage"
+      )
+      .innerText =
+      "Firebase Error";
+
+
+    alert(
+      error.message
+    );
+
+  }
+
+};
+
+
+// =====================================================
+// DELETE FINGERPRINT
+// =====================================================
+
+window.deleteFingerprint =
+async function() {
+
+  const select =
+    document.getElementById(
+      "deleteSelect"
+    );
+
+
+  const id =
+    parseInt(
+      select.value
+    );
+
+
+  if (isNaN(id)) {
+
+    alert(
+      "Please select fingerprint"
+    );
+
+    return;
+  }
+
+
+  const selectedOption =
+    select.options[
+      select.selectedIndex
+    ];
+
+
+  const name =
+    selectedOption.dataset.name || "";
+
+
+  const confirmDelete =
+    confirm(
+      "Delete Fingerprint?\n\n" +
+      "ID: " +
+      id +
+      "\nName: " +
+      name
+    );
+
+
+  if (!confirmDelete)
+    return;
+
+
+  const requestId =
+    Math.floor(
+      Math.random() *
+      1000000000
+    );
+
+
+  document
+    .getElementById(
+      "deleteMessage"
+    )
+    .innerText =
+    "Sending delete command...";
+
+
+  try {
+
+    await set(
+
+      ref(
+        db,
+        "command"
+      ),
+
+      {
+        mode: "DELETE",
+        id: id,
+        name: name,
+        requestId: requestId
+      }
+
+    );
+
+
+    document
+      .getElementById(
+        "deleteMessage"
+      )
+      .innerText =
+      "Waiting for ESP32...";
+
+  }
+
+  catch(error) {
+
+    console.error(error);
+
+
+    document
+      .getElementById(
+        "deleteMessage"
+      )
+      .innerText =
+      "Firebase Error";
+
+
+    alert(
+      error.message
+    );
+
+  }
+
+};
+
+
+// =====================================================
+// ESCAPE HTML
+// =====================================================
+
+function escapeHTML(text) {
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+
+  div.textContent =
+    String(text);
+
+
+  return div.innerHTML;
+
+}
+
+</script>
+
+</body>
+</html>
